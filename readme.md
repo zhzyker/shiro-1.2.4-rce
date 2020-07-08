@@ -1,6 +1,6 @@
 # Readme
-shiro &lt;= 1.2.4 反序列化远程命令执行利用脚本
-默认仅适配Linux，适配Windows
+shiro &lt;= 1.2.4 反序列化远程命令执行利用脚本  
+默认仅适配Linux，适配Windows  
 python脚本需要调用ysoserial-sleep.jar，ysoserial-sleep.jar文件并不是原版的，修改了部分功能，故不要使用原版ysoserial，否则将无法检测  
 ```
 +-------------------------------------------------------------------------------------------------------+
@@ -16,3 +16,8 @@ python脚本需要调用ysoserial-sleep.jar，ysoserial-sleep.jar文件并不是
 + VER: Apahce Shiro <= 1.2.4                                                                            +
 +-------------------------------------------------------------------------------------------------------+
 ```
+
+# RCE
+
+![images](https://github.com/zhzyker/shiro-1.2.4-rce/blob/master/image/1.gif)
+![images](https://github.com/zhzyker/shiro-1.2.4-rce/blob/master/image/2.gif)
