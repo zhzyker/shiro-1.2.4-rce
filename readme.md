@@ -1,7 +1,7 @@
 # Readme
 shiro &lt;= 1.2.4 反序列化远程命令执行利用脚本  
-默认仅适配Linux，适配Windows  
-python脚本需要调用ysoserial-sleep.jar，ysoserial-sleep.jar文件并不是原版的，修改了部分功能，故不要使用原版ysoserial，否则将无法检测  
+使用延时判断key和gadget，即使目标不出网也可以检测是否存在漏洞  
+python脚本需要调用ysoserial-sleep.jar，ysoserial-sleep.jar文件并不是原版的，增加了延时命令功能，故不要使用原版ysoserial，否则将无法检测  
 ```
 +-------------------------------------------------------------------------------------------------------+
 + DES: By zhzyker as https://github.com/zhzyker/exphub                                                  +
